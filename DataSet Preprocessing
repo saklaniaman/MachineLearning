@@ -1,0 +1,50 @@
+#DataSet_Preprocessing
+
+data=pd.read_csv("titanic_train.csv")
+data.head()
+data.drop(["PassengerId","Ticket","Parch","Name","Fare"],  axis=1, inplace=True)
+data.head()
+data.isnull().sum()
+sns.heatmap(data.isnull(), yticklabels="True", cmap="YlGnBu")
+
+
+for i in range(1,4):
+    age = int(data[data["Pclass"]==i]['Age'].dropna().mean())
+    print(age)
+
+
+def set_age (row):
+    
+    pclass = row[0]
+    age =row [1]
+    
+    if np.isnan(age):
+        if pclass == 1 :
+            return 38
+        elif pclass ==2:
+            return 29
+        else :
+            return 25
+    else :
+        return age
+
+
+data["Age"] = data[ ["Pclass", "Age"] ].apply(set_age, axis=1)
+
+
+data
+data=data.drop(columns='Cabin')
+
+data.head()
+
+sns.heatmap(data.isnull(), yticklabels="True", cmap="YlGnBu")
+
+from sklearn.preprocessing import LabelEncoder
+label_encoder = LabelEncoder()
+data["Sex"] = label_encoder.fit_transform(data['Sex'])
+
+data["Embarked"] = label_encoder.fit_transform(data['Embarked'])
+data.head()
+data["Embarked"].isnull().sum()
+x = data.iloc[ : , 1: 5]
+y=data['Survived']
